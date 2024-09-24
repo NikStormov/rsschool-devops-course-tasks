@@ -13,18 +13,76 @@ env:
 permissions:
   id-token: write
   contents: read
+
 jobs:
-  AssumeRoleAndCallIdentity:
+  setup:
+    name: Setup Terraform
     runs-on: ubuntu-latest
+    outputs:
+      terraform_version: ${{ steps.set_tf_version.outputs.version }}
     steps:
-      - name: Git clone the repository
+      - name: Checkout the repository
         uses: actions/checkout@v3
-      - name: configure aws credentials
+
+      - name: Set up Terraform
+        id: set_tf_version
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+  configure-aws:
+    name: Configure AWS Credentials
+    runs-on: ubuntu-latest
+    outputs:
+      aws_credentials: ${{ steps.aws_setup.outputs.aws_creds }}
+    steps:
+      - name: Configure AWS credentials
+        id: aws_setup
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS
           aws-region: ${{ env.AWS_REGION }}
-      - name: GetCallerIdentity
-        run: |
-          aws sts get-caller-identity
+          
+  terraform-check:
+    name: Terraform Check
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+  
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: [ terraform-check, configure-aws ]
+    steps:
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ needs.setup.outputs.terraform_version }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: [ terraform-plan, configure-aws ]
+    steps:
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ needs.setup.outputs.terraform_version }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
