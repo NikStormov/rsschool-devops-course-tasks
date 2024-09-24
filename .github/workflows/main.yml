@@ -40,9 +40,10 @@ jobs:
         id: aws_setup
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN.AWS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS
           aws-region: ${{ env.AWS_REGION }}
+          debug-logs: true
           
   terraform-check:
     name: Terraform Check
