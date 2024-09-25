@@ -8,6 +8,6 @@ variable "AWS_SECRET_KEY" {
   type        = string
 }
 variable "AWS_ACCESS_KEY" {
-  description = "aws_root_key"
+  description = "aws_access_key"
   type        = string
 }
