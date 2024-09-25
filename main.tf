@@ -10,12 +10,13 @@ terraform {
 }
 
 provider "aws" {
-  region  = "us-east-1"
+  access_key = var.AWS_ACCESS_KEY
+  secret_key = var.AWS_SECRET_KEY
+  region  = var.aws_region
 }
 
 resource "aws_instance" "devops-lesson" {
-  ami           = "ami"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
 
   tags = {
     Name = "ServerDevOpsInstance"
