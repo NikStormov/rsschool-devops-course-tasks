@@ -54,10 +54,10 @@ jobs:
           terraform_version: ${{ needs.setup.outputs.terraform_version }}
 
       - name: List repository files
-        run: ls -R
+        run: ls -R $TERRAFORM_CLI_PATH
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init ./$TERRAFORM_CLI_PATH
 
       - name: Terraform Format Check
         run: terraform fmt -check
