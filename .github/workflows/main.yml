@@ -8,6 +8,7 @@ on:
 
 env:
   AWS_REGION : "us-east-1"
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
 permissions:
   id-token: write
@@ -39,7 +40,7 @@ jobs:
         id: aws_setup
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::739275448137:role/GithubActionsRole
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS
           aws-region: ${{ env.AWS_REGION }}
           
