@@ -16,7 +16,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "devops-lesson" {
-  ami = "ami"
+  ami = "ami-0e04bcbe83a83792e"
   instance_type = "t3.micro"
 
   tags = {
