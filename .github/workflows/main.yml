@@ -53,6 +53,9 @@ jobs:
         with:
           terraform_version: ${{ needs.setup.outputs.terraform_version }}
 
+      - name: List repository files
+        run: ls -R
+
       - name: Terraform Init
         run: terraform init
 
