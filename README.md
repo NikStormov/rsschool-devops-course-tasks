@@ -22,6 +22,5 @@ ENV for terraform as secret,access keys is tored in github repository secrets an
 8.Create a Github Actions workflow for deployment via Terraform
 
 Variables separate in file variables.tf
-before tf apply, two jobs in needed to be OK
-1. setup - create and pull changes
-2. configure-aws - connecting to aws
+before tf apply, jobs in needed to be OK
+1. configure-aws - connecting to aws
