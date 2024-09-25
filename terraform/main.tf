@@ -5,26 +5,18 @@ terraform {
       version = "~> 4.16"
     }
   }
-  backend "s3" {
+   backend "s3" {
     bucket         = "epam-lesson1"
     region         = "eu-central-1"
     key            = "env:/task1/terraform.tfstate"
     encrypt        = true
+    assume_role = {
+      role_arn = "arn:aws:iam::739275448137:role/GithubActionsRole"
+    }
   }
   required_version = ">= 1.2.0"
 }
 
 provider "aws" {
-  access_key = var.AWS_ACCESS_KEY
-  secret_key = var.AWS_SECRET_KEY
   region     = var.aws_region
-}
-
-resource "aws_instance" "devops-lesson" {
-  ami = "ami-0e04bcbe83a83792e"
-  instance_type = "t3.micro"
-
-  tags = {
-    Name = "ServerDevOpsInstance"
-  }
 }
