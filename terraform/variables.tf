@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 variable "AWS_SECRET_KEY" {
   description = "aws_root_key"
-  type = string
+  type        = string
 }
 variable "AWS_ACCESS_KEY" {
   description = "aws_root_key"
-  type = string
+  type        = string
 }
