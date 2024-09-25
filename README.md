@@ -17,11 +17,7 @@ My repository  [link](https://github.com/NikStormov/rsschool-devops-course-tasks
 
 5.Create a bucket for Terraform states
 ```
-env:
-    TF_VAR_AWS_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_ACCESS_KEY }}
-    TF_VAR_AWS_SECRET_KEY: ${{ secrets.TF_VAR_AWS_SECRET_KEY }}
-    AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_ACCESS_KEY }}
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET_KEY }} 
+Use ARN env
 ```
 saved in github for terraform and aws as secret.
 
