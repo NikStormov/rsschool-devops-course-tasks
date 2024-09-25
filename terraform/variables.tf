@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region"
   type        = string
-  default     = "us-central-1"
+  default     = "eu-central-1"
 }
 variable "AWS_SECRET_KEY" {
   description = "aws_root_key"
