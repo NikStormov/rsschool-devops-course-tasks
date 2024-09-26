@@ -10,6 +10,9 @@ terraform {
     region         = "eu-central-1"
     key            = "env:/task1/terraform.tfstate"
     encrypt        = true
+    assume_role = {
+      session_name = "arn:aws:iam::739275448137:role/GithubActionsRole"
+    }
   }
   required_version = ">= 1.2.0"
 }
