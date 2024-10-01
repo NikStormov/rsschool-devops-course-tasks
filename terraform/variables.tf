@@ -21,3 +21,12 @@ variable "private_subnet_cidrs" {
  description = "Private Subnet CIDR values"
  default     = ["10.0.3.0/24", "10.0.4.0/24"]
 }
+
+variable "instance_type" {
+  default = "t2.micro"
+}
+
+variable "ec2_instance_name" {
+  description = "Name of the EC2 instance"
+  default     = "terraform-task2"
+}
