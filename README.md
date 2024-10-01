@@ -1,36 +1,44 @@
 # rsschool-devops-course-tasks
-1.Install AWS CLI and Terraform
+## Basic Infrastructure Configuration Review
+## Objective
 
-![plot](./images/lesson1/versions_tf_aws.png)
+In this task, you will write Terraform code to configure the basic networking infrastructure required for a Kubernetes (K8s) cluster.
 
-2.Create IAM User and Configure MFA
+## Evaluation Criteria (100 points for covering all criteria)
 
-![plot](./images/lesson1/mfa_access.png)
+1. **Terraform Code Implementation (50 points)**
 
-3.Configure AWS CLI
+   - Terraform code is created to configure the following:
+     - VPC:
+     ![vpc](./images/task2/vpc.png)
+     - 2 public subnets in different AZs:
+     ![public](./images/task2/publicnet.png)
+     - 2 private subnets in different AZs: goes same as public networks.
+     - Internet Gateway
+     ![gateway_tf](./images/task2/gateway_tf.png)
+     - Routing configuration:
+       - Instances in all subnets can reach each other
+       - Instances in public subnets can reach addresses outside VPC and vice-versa
 
-Can run previous commands from cli to get info from AWS.
+2. **Code Organization (10 points)**
 
-4.Create a Github repository for your Terraform code
+   - Variables are defined in a separate variables file.
+   - Resources are separated into different files for better organization.
 
-My repository  [link](https://github.com/NikStormov/rsschool-devops-course-tasks)
-Give access to all repo in Role ("repo:NikStormov/*"), becouse action can't give access from pr. 
-5.Create a bucket for Terraform states
-```
-Use ARN env
-```
-saved in github for terraform and aws as secret.
+3. **Verification (10 points)**
 
-8.Create a Github Actions workflow for deployment via Terraform
+   - Terraform plan is executed successfully.
+   - A resource map screenshot is provided (VPC -> Your VPCs -> your_VPC_name -> Resource map).
 
-For s3 backend, its create a file state.
-![plot](./images/lesson1/s3buc.png)
-
-And creates a instans
-![plot](./images/lesson1/ec2.png)
-
-
-More about Terraform backend i get from [Terraform S3](https://developer.hashicorp.com/terraform/language/backend/s3) documen
-
-Answers about how to connect terraform to s3 aws [what env its needed](https://docs.aws.amazon.com/sdkref/latest/guide/feature-static-credentials.html) to auth
-
+4. **Additional Tasks (30 points)**
+   - **Security Groups and Network ACLs (5 points)**
+     - Implement security groups and network ACLs for the VPC and subnets.
+   - **Bastion Host (5 points)**
+     - Create a bastion host for secure access to the private subnets.
+   - **NAT is implemented for private subnets (10 points)**
+     - Orginize NAT for private subnets with simpler or cheaper way
+     - Instances in private subnets should be able to reach addresses outside VPC
+   - **Documentation (5 points)**
+     - Document the infrastructure setup and usage in a README file.
+   - **Submission (5 points)**
+   - A GitHub Actions (GHA) pipeline is set up for the Terraform code.
