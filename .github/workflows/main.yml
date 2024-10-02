@@ -52,6 +52,7 @@ jobs:
     defaults:
       run:
         working-directory: terraform
+    needs: [ terraform-check ]
     name: Terraform Plan
     runs-on: ubuntu-latest
     steps:
@@ -82,6 +83,7 @@ jobs:
       run:
         working-directory: terraform
     if: github.ref == 'refs/heads/task_2'
+    needs: [ terraform-check ]
     name: Terraform Plan
     runs-on: ubuntu-latest
     steps:
