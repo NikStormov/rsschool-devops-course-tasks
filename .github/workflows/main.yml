@@ -35,20 +35,21 @@ jobs:
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-      
-      - name: ls -la    
-        run: ls -la
-
+        
       - name: Terraform init     
         run: terraform init
-
-      - name: ls -l ../ 
+        
+      - name: ls -la    
+        run: ls -la
+      - name: ls -la ../ 
         run: ls -la ../
+      - name: ls -la .terraworm
+        run: ls -la .terraform
 
       - name: Create terraform cache
         uses: actions/cache/save@v4
         with:
-          path: .terraform*
+          path: ./.terraform*
           key: terraform-cache-${{ runner.os }}-${{ github.run_id }}
 
       - name: Terraform Check
