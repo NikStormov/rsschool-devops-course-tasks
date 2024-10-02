@@ -77,7 +77,7 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/task_2'
     name: Terraform Plan
     runs-on: ubuntu-latest
     steps:
