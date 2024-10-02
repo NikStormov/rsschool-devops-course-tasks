@@ -69,7 +69,7 @@ jobs:
       - name: Restore terraform cache
         uses: actions/cache/restore@v4
         with:
-          path: .terraform*
+          path: ./terraform/.terraform*
           key: terraform-cache-${{ github.run_id }}
           fail-on-cache-miss: true
 
@@ -99,7 +99,7 @@ jobs:
       - name: Restore terraform cache
         uses: actions/cache/restore@v4
         with:
-          path: .terraform*
+          path: ./terraform/.terraform*
           key: terraform-cache-${{ github.run_id }}
           fail-on-cache-miss: true
       
