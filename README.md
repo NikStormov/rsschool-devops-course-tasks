@@ -33,7 +33,9 @@ In this task, you will write Terraform code to configure the basic networking in
 3. **Verification (10 points)**
 
    - Terraform plan is executed successfully.
-   - A resource map screenshot is provided (VPC -> Your VPCs -> your_VPC_name -> Resource map).
+   - A resource map screenshot is provided (VPC -> Your VPCs -> your_VPC_name -> Resource map).  
+   There is three of them bcs one private i deleted while configure ENV.  
+   [\[x\] vpc resources](./images/task2/vpc-resource.png)  
 
 4. **Additional Tasks (30 points)**
    - **Security Groups and Network ACLs (5 points)**
