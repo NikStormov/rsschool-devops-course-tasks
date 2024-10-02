@@ -36,8 +36,14 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
       
+      - name: ls -la    
+        run: ls -la
+
       - name: Terraform init     
         run: terraform init
+
+      - name: ls -l ../ 
+        run: ls -la ../
 
       - name: Create terraform cache
         uses: actions/cache/save@v4
