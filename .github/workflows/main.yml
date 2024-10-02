@@ -83,8 +83,8 @@ jobs:
       run:
         working-directory: terraform
     if: github.ref == 'refs/heads/task_2'
-    needs: [ terraform-check ]
-    name: Terraform Plan
+    needs: [ terraform-check, terraform-plan ]
+    name: Terraform Apply
     runs-on: ubuntu-latest
     steps:
       - name: Git pull
