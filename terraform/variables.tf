@@ -4,6 +4,22 @@ variable "aws_region" {
   default     = "eu-central-1"
 }
 
+variable "instance_type" {
+  default = "t2.micro"
+}
+
+variable "ec2_instance_name" {
+  description = "Name of the EC2 instance"
+  default     = "DevOpsTask2"
+}
+
+variable "ami-ec2-images" {
+  description = "Which AMI use."
+  default = {
+    us-east-1 = "ami-05fa00d4c63e32376"
+    us-east-2 = "ami-0568773882d492fc8"
+  }
+}
 ## Task 2: Basic Infrastructure Configuration
 variable "azs" {
  type        = list(string)
