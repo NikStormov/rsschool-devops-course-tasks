@@ -42,7 +42,7 @@ resource "aws_security_group" "ec2" {
 
 resource "aws_network_acl" "network_80" {
   vpc_id     = aws_vpc.root.id
-  subnet_ids = aws_subnet.public_subnets[0].id
+  subnet_ids = [aws_subnet.public_subnets[0].id]
 
   egress {
     protocol  = "tcp"
@@ -69,7 +69,7 @@ resource "aws_network_acl" "network_80" {
 
 resource "aws_network_acl" "network_443" {
   vpc_id     = aws_vpc.root.id
-  subnet_ids = aws_subnet.public_subnets[0].id
+  subnet_ids = [aws_subnet.public_subnets[0].id]
   egress {
     protocol  = "tcp"
     rule_no   = 200
