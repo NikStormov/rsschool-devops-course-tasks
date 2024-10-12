@@ -24,13 +24,6 @@ resource "aws_security_group" "ec2" {
   vpc_id      = aws_vpc.root.id
 
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = [aws_security_group.http.id]
-  }
-
-  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -42,5 +35,57 @@ resource "aws_security_group" "ec2" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+## ACL
+
+resource "aws_network_acl" "network_80" {
+  vpc_id         = aws_vpc.root.id
+  count          = length(var.public_subnet_cidrs)
+  subnet_ids     = [element(aws_subnet.public_subnets[*].id, count.index)]
+  egress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  tags = {
+    Name = "80port"
+  }
+}
+
+resource "aws_network_acl" "network_443" {
+  vpc_id         = aws_vpc.root.id
+  count          = length(var.public_subnet_cidrs)
+  subnet_ids     = [element(aws_subnet.public_subnets[*].id, count.index)]
+  egress {
+    protocol   = "tcp"
+    rule_no    = 500
+    action     = "allow"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 400
+    action     = "allow"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  tags = {
+    Name = "443port"
   }
 }
