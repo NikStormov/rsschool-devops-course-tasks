@@ -41,23 +41,26 @@ resource "aws_security_group" "ec2" {
 ## ACL
 
 resource "aws_network_acl" "network_80" {
-  vpc_id         = aws_vpc.root.id
-  count          = length(var.public_subnet_cidrs)
-  subnet_ids     = [element(aws_subnet.public_subnets[*].id, count.index)]
+  vpc_id     = aws_vpc.root.id
+  count      = length(var.public_subnet_cidrs)
+  subnet_ids = [element(aws_subnet.public_subnets[*].id, count.index)]
+
   egress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    from_port  = 80
-    to_port    = 80
+    protocol  = "tcp"
+    rule_no   = 200
+    action    = "allow"
+    cidr_block = "10.0.0.0/22"
+    from_port = 80
+    to_port   = 80
   }
 
   ingress {
-    protocol   = "tcp"
-    rule_no    = 100
-    action     = "allow"
-    from_port  = 80
-    to_port    = 80
+    protocol  = "tcp"
+    rule_no   = 100
+    action    = "allow"
+    cidr_block = "10.0.0.0/22"
+    from_port = 80
+    to_port   = 80
   }
 
   tags = {
@@ -66,23 +69,25 @@ resource "aws_network_acl" "network_80" {
 }
 
 resource "aws_network_acl" "network_443" {
-  vpc_id         = aws_vpc.root.id
-  count          = length(var.public_subnet_cidrs)
-  subnet_ids     = [element(aws_subnet.public_subnets[*].id, count.index)]
+  vpc_id     = aws_vpc.root.id
+  count      = length(var.public_subnet_cidrs)
+  subnet_ids = [element(aws_subnet.public_subnets[*].id, count.index)]
   egress {
-    protocol   = "tcp"
-    rule_no    = 500
-    action     = "allow"
-    from_port  = 443
-    to_port    = 443
+    protocol  = "tcp"
+    rule_no   = 200
+    action    = "allow"
+    cidr_block = "10.0.0.0/22"
+    from_port = 443
+    to_port   = 443
   }
 
   ingress {
-    protocol   = "tcp"
-    rule_no    = 400
-    action     = "allow"
-    from_port  = 443
-    to_port    = 443
+    protocol  = "tcp"
+    rule_no   = 100
+    action    = "allow"
+    cidr_block = "10.0.0.0/22"
+    from_port = 443
+    to_port   = 443
   }
 
   tags = {
