@@ -1,59 +1,38 @@
-# rsschool-devops-course-tasks
-## Basic Infrastructure Configuration Review
+# Task: K8s Cluster Configuration and Creation
+
 ## Objective
 
-In this task, you will write Terraform code to configure the basic networking infrastructure required for a Kubernetes (K8s) cluster.
+In this task, configure and deploy a Kubernetes (K8s) cluster on AWS using either kOps or k3s. Also verify the cluster by running a simple workload.
+
+## Submission
+
+- Provide a PR with the Terraform code for the K8s cluster and bastion host.
+- Provide a screenshot of the `kubectl get nodes` command output.
+- Ensure that the simple workload is deployed and running successfully on the cluster.
+- Provide a PR with the monitoring setup.
+- Provide a README file documenting the cluster setup and deployment process.
 
 ## Evaluation Criteria (100 points for covering all criteria)
 
-1. **Terraform Code Implementation (50 points)**
+1. **Terraform Code for AWS Resources (10 points)**
 
-   - Terraform code is created to configure the following:
-     - VPC:
-     ![vpc](./images/task2/vpc.png)
-     - 2 public subnets in different AZs:
-     by using "element" i can define one resource and cofigure as many as elements it has
-     ![public](./images/task2/publicnet.png)
-     - 2 private subnets in different AZs: goes same as public networks.
-     - Internet Gateway
-     ![gateway_tf](./images/task2/gateway_tf.png)
-     - Routing configuration:
-       - Instances in all subnets can reach each other
-       - Instances in public subnets can reach addresses outside VPC and vice-versa
+   - Terraform code is created or extended to manage AWS resources required for the cluster creation.
+   - The code includes the creation of a bastion host.
 
-2. **Code Organization (10 points)**
+2. **Cluster Deployment (60 points)**
 
-   - Variables are defined in a separate variables file.  
-    [\[x\] variables](./terraform/variables.tf)
-   - Resources are separated into different files for better organization.  
-    [\[x\] resource_network.tf](./terraform/resource_network.tf)  
-    [\[x\] policy.tf](./terraform/policy.tf)  
-    [\[x\] ec2.tf](./terraform/ec2.tf)  
+   - A K8s cluster is deployed using either kOps or k3s.
+   - The deployment method is chosen based on the user's preference and understanding of the trade-offs.
 
-3. **Verification (10 points)**
+3. **Cluster Verification (10 points)**
 
-   - Terraform plan is executed successfully.
-   - A resource map screenshot is provided (VPC -> Your VPCs -> your_VPC_name -> Resource map).  
-   There is three of them bcs one private i deleted while configure ENV.  
-   [\[x\] vpc resources](./images/task2/vpc-resource.png)  
+   - The cluster is verified by running the `kubectl get nodes` command from the local computer.
+   - A screenshot of the `kubectl get nodes` command output is provided.
 
-4. **Additional Tasks (30 points)**
-   - **Security Groups and Network ACLs (5 points)**
-     - Implement security groups and network ACLs for the VPC and subnets.  
-     Group "http" is for networks allowing 80 port, group "ec2" is for instanses.  
-    [\[x\] security.tf](./terraform/security.tf)  
-   - **Bastion Host (5 points)**
-     - Create a bastion host for secure access to the private subnets.
-     Created bastion in first private network.  
-     [\[x\] ec2.tf](./terraform/ec2.tf)
-   - **NAT is implemented for private subnets (10 points)**
-     - Orginize NAT for private subnets with simpler or cheaper way  
-     Used simple way
-     - Instances in private subnets should be able to reach addresses outside VPC  
-     bastion has private network and using the default gateway (resource aws_internet_gateway that we connected to resource "aws_route_table" "private_subnet_route")  
-     [\[x\] resource_network.tf](./terraform/resource_network.tf) 
-     [bastion_network](./images/task2/bastion_private.png)
-   - **Documentation (5 points)**
-     - Document the infrastructure setup and usage in a README file.
-   - **Submission (5 points)**
-   - A GitHub Actions (GHA) pipeline is set up for the Terraform code.
+4. **Workload Deployment (10 points)**
+
+   - A simple workload is deployed on the cluster using `kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml`.
+   - The workload runs successfully on the cluster.
+
+5. **Additional Tasks (10 points)**
+   - Document the cluster setup and deployment process in a README file.

@@ -14,7 +14,7 @@ variable "ec2_instance_name" {
 }
 
 variable "ami-ec2-images" {
-  description = "Which AMI use."
+  description = "Which AMI to use."
   default = {
     eu-central-1 = "ami-0084a47cc718c111a"
   }

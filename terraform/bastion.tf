@@ -3,10 +3,11 @@ resource "aws_instance" "bastion" {
   instance_type               = var.instance_type
   iam_instance_profile        = aws_iam_instance_profile.session-manager.id
   associate_public_ip_address = true
-  security_groups             = [aws_security_group.ec2.id, aws_security_group.http.id]
+  security_groups             = [aws_security_group.sg_https_ssh.id]
 
   subnet_id = aws_subnet.public_subnets[0].id
+
   tags = {
-    Name = "BastionTask2"
+    Name = "BastionTask2/Task3"
   }
 }
