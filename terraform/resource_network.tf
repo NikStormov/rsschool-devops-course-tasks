@@ -31,27 +31,12 @@ resource "aws_subnet" "private_subnets" {
   }
 }
 
-# PUBLIC SUBNET ASSOCIATION
-resource "aws_route_table_association" "public_subnet_asso" {
-  count          = length(var.public_subnet_cidrs)
-  subnet_id      = element(aws_subnet.public_subnets[*].id, count.index)
-  route_table_id = aws_route_table.public_subnet_route.id
-}
-
-resource "aws_route_table_association" "private_subnet_asso" {
-  count          = length(var.private_subnet_cidrs)
-  subnet_id      = element(aws_subnet.private_subnets[*].id, count.index)
-  route_table_id = aws_route_table.private_subnet_route.id
-}
-
 ## NAT 
 
 resource "aws_eip" "nat" {
   vpc = true
 }
 resource "aws_nat_gateway" "nat_gateway" {
-  # count         = length(aws_subnet.private_subnets)
   allocation_id = aws_eip.nat.id
-  subnet_id = aws_subnet.private_subnets[0].id
-  # subnet_id     = element(aws_subnet.private_subnets[*].id, count.index)
+  subnet_id     = aws_subnet.public_subnets[0].id
 }

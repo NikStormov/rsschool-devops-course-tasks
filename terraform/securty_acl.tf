@@ -2,13 +2,12 @@
 
 resource "aws_network_acl" "network_common_public" {
   vpc_id     = aws_vpc.root.id
-  count      = length(var.public_subnet_cidrs)
-  subnet_ids = [element(aws_subnet.public_subnets[*].id, count.index)]
+  subnet_ids = [aws_subnet.public_subnets[0].id, aws_subnet.public_subnets[1].id]
 
   dynamic "ingress" {
-    for_each = ["22", "80", "443"]
+    for_each = ["0"]
     content {
-      protocol   = "tcp"
+      protocol   = "-1"
       rule_no    = ingress.key + 1
       action     = "allow"
       cidr_block = "0.0.0.0/0"
@@ -19,9 +18,9 @@ resource "aws_network_acl" "network_common_public" {
   }
 
   dynamic "egress" {
-    for_each = ["22", "80", "443"]
+    for_each = ["0"]
     content {
-      protocol   = "tcp"
+      protocol   = "-1"
       rule_no    = egress.key + 1
       action     = "allow"
       cidr_block = "0.0.0.0/0"
@@ -38,26 +37,24 @@ resource "aws_network_acl" "network_common_public" {
 
 resource "aws_network_acl" "network_common_private" {
   vpc_id     = aws_vpc.root.id
-  count      = length(var.private_subnet_cidrs)
-  subnet_ids = [element(aws_subnet.private_subnets[*].id, count.index)]
+  subnet_ids = [aws_subnet.private_subnets[0].id, aws_subnet.private_subnets[1].id]
 
   dynamic "ingress" {
-    for_each = ["22", "80", "443"]
+    for_each = ["0"]
     content {
-      protocol   = "tcp"
+      protocol   = "-1"
       rule_no    = ingress.key + 1
       action     = "allow"
       cidr_block = "0.0.0.0/0"
       from_port  = ingress.value
       to_port    = ingress.value
     }
-
   }
 
   dynamic "egress" {
-    for_each = ["22", "80", "443"]
+    for_each = ["0"]
     content {
-      protocol   = "tcp"
+      protocol   = "-1"
       rule_no    = egress.key + 1
       action     = "allow"
       cidr_block = "0.0.0.0/0"

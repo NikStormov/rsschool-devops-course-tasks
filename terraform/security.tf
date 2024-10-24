@@ -4,11 +4,11 @@ resource "aws_security_group" "sg_https_ssh" {
   vpc_id      = aws_vpc.root.id
 
   dynamic "ingress" {
-    for_each = ["80", "443", "22"]
+    for_each = ["0"]
     content {
       from_port   = ingress.value
       to_port     = ingress.value
-      protocol    = "tcp"
+      protocol    = "-1"
       cidr_blocks = ["0.0.0.0/0"]
     }
 
@@ -17,7 +17,7 @@ resource "aws_security_group" "sg_https_ssh" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "tcp"
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
