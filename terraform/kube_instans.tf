@@ -10,7 +10,7 @@ resource "aws_instance" "kube_master" {
 
   user_data = <<-EOF
     #!/bin/bash
-    echo "${ssh_public_key}" >> /home/ubuntu/.ssh/authorized_keys
+    echo "${var.ssh_public_key}" >> /home/ubuntu/.ssh/authorized_keys
     apt-get update -y
     apt-get install -y curl
     curl -sfL https://get.k3s.io
