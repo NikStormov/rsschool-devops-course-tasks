@@ -148,6 +148,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ls -la ~/.ssh/
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP:/etc/rancher/k3s/k3s.yaml ./kubeconfig
 
       - name: Install Helm

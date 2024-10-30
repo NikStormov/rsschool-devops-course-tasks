@@ -12,7 +12,7 @@ resource "aws_instance" "kube_master" {
     echo "${var.ssh_public_key}" >> /home/ubuntu/.ssh/authorized_keys
     apt-get update -y > /dev/null 2>&1
     apt-get install -y curl > /dev/null 2>&1
-    curl -sfL https://get.k3s.io | sh -s - --node-external-ip $(curl -s 2ip.io)
+    curl -sfL https://get.k3s.io | sh -s - --advertise-address $(curl -s 2ip.io)
     sudo chmod 655 /etc/rancher/k3s/k3s.yaml
   EOF
 
