@@ -76,7 +76,7 @@ jobs:
           fail-on-cache-miss: true
 
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan -var "ssh_public_key=${SSH_PUBLIC_KEY}" -input=false
         # -input=false for noninteractive
 
   terraform-apply:
