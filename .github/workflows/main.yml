@@ -114,7 +114,7 @@ jobs:
       run:
         working-directory: terraform
     if: github.ref == 'refs/heads/task_4'
-    needs: [ terraform-check, terraform-plan ]
+    needs: [ terraform-apply ]
     name: Helm Hell
     runs-on: ubuntu-latest
     steps:
