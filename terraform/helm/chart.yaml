@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-pod"
+spec:
+  containers:
+    - name: "{{ .Release.Name }}-container"
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      resources:
+        requests:
+          memory: {{ .Values.resources.requests.memory }}
+          cpu: {{ .Values.resources.requests.cpu }}
+        limits:
+          memory: {{ .Values.resources.limits.memory }}
+          cpu: {{ .Values.resources.limits.cpu }}
+      volumeMounts:
+        - mountPath: "/data"
+          name: storage
+  volumes:
+    - name: storage
+      persistentVolumeClaim:
+        claimName: "{{ .Release.Name }}-pvc"
