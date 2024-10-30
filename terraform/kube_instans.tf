@@ -1,12 +1,12 @@
 resource "aws_instance" "kube_master" {
   ami                         = lookup(var.ami-ec2-images, var.aws_region)
-  instance_type               = var.instans_t2.medium
+  instance_type               = var.instans_t2_medium
   iam_instance_profile        = aws_iam_instance_profile.session-manager.id
   associate_public_ip_address = false
   security_groups             = [aws_security_group.sg_https_ssh.id]
-  key_name      = "emap"
+  key_name                    = "emap"
 
-  subnet_id                   = aws_subnet.public_subnets[0].id
+  subnet_id = aws_subnet.public_subnets[0].id
 
   user_data = <<-EOF
     #!/bin/bash

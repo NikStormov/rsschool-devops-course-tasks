@@ -8,7 +8,7 @@ variable "instance_type" {
   default = "t2.micro"
 }
 
-variable "instans_t2.medium" {
+variable "instans_t2_medium" {
   default = "t2.medium"
 }
 
@@ -43,6 +43,6 @@ variable "private_subnet_cidrs" {
 
 
 output "ec2_public_ip" {
-  value = aws_instance.kube_master.public_ip
+  value       = aws_instance.kube_master.public_ip
   description = "The public IP address of the EC2 instance"
 }
