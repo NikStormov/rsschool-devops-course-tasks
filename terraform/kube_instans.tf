@@ -10,9 +10,9 @@ resource "aws_instance" "kube_master" {
 
   user_data = <<-EOF
     #!/bin/bash
-    apt-get update -y
-    apt-get install -y curl
-    curl -sfL https://get.k3s.io
+    apt-get update -y > /dev/null 2>&1
+    apt-get install -y curl > /dev/null 2>&1
+    curl -sfL https://get.k3s.io | sh > /dev/null 2>&1
   EOF
 
   root_block_device {
@@ -20,6 +20,6 @@ resource "aws_instance" "kube_master" {
   }
 
   tags = {
-    Name = "kuber_master/Task3"
+    Name = "kuber_master_Task4"
   }
 }
