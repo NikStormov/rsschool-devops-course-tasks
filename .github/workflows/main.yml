@@ -148,7 +148,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./terraform/helm ubuntu@$EC2_IP:/helm
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./helm ubuntu@$EC2_IP:/helm
 
       - name: Apply pvc configs
         env:
@@ -164,7 +164,7 @@ jobs:
       run:
         working-directory: terraform
     if: github.ref == 'refs/heads/task_4'
-    needs: [ terraform-apply ]
+    needs: [ k3spv ]
     name: Helm Hell
     runs-on: ubuntu-latest
     steps:
