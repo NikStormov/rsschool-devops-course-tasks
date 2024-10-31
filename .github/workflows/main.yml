@@ -148,7 +148,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./helm ubuntu@$EC2_IP:/helm
+          scp -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./helm ubuntu@$EC2_IP:/helm
 
       - name: Apply pvc configs
         env:
