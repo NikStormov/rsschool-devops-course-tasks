@@ -110,6 +110,49 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -var "ssh_public_key=${SSH_PUBLIC_KEY}" -auto-approve
 
+  k3spv:
+    defaults:
+      run:
+        working-directory: terraform
+    if: github.ref == 'refs/heads/task_4'
+    needs: [ terraform-apply ]
+    name: k3s Hell pvc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git pull
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials v3
+        id: aws_setup
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Restore terraform cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+
+      - name: Scp pvc configs
+        env:
+          EC2_IP: ${{env.EC2_IP}}
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./terraform/helm ubuntu@$EC2_IP:/helm
+
+      - name: Apply pvc configs
+        env:
+          EC2_IP: ${{ env.EC2_IP }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP -t "kubectl create -f /helm/templates/pvc.yaml"
+
   helm:
     defaults:
       run:
@@ -141,24 +184,16 @@ jobs:
         id: get_ip
         run: echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
 
-      - name: Copy kubeconfig from EC2
+      - name: Install Helm
         env:
           EC2_IP: ${{ env.EC2_IP }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP -t "sudo ls -l /etc/rancher/k3s/k3s.yaml"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP -t "sudo chmod 655 /etc/rancher/k3s/k3s.yaml"
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP:/etc/rancher/k3s/k3s.yaml ./kubeconfig
-          sed -i '' "s|https://127.0.0.1:6443|https://$EC2_IP:6443|g" ./kubeconfig
-
-      - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP -t "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
 
       - name: Deploy Jenkins with Helm
         run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP << 'EOF'
           helm repo add jenkins https://charts.jenkins.io
           helm repo update
-          helm install jenkins jenkins/jenkins -f ./helm/values.yaml --kubeconfig ./kubeconfig
+          helm install jenkins jenkins/jenkins -f /helm/values.yaml --kubeconfig /etc/rancher/k3s/k3s.yaml
+          EOF
