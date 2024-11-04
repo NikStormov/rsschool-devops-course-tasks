@@ -158,7 +158,10 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP << 'EOF'
-          sleep 30
+          while ! kubectl get nodes; do
+            echo "Waiting for k3s to be ready..."
+            sleep 10
+          done
           sudo kubectl create namespace jenkins
           sudo kubectl apply -f /tmp/helm/templates/jenkins-volume.yaml
           sudo kubectl apply -f /tmp/helm/templates/jenkins-sa.yaml
