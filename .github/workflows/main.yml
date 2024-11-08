@@ -2,9 +2,13 @@ name: Connect to an AWS role from a GitHub repository
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - task_*
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - task_*
 
 permissions:
   id-token: write
@@ -12,18 +16,52 @@ permissions:
 
 env: 
   AWS_REGION: "eu-central-1"
+  SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
 jobs:
-  setup:
+  terraform-check:
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git pull
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials v1
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION  }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        
+      - name: Terraform init     
+        run: terraform init
+
+      - name: Create terraform cache
+        uses: actions/cache/save@v4
+        with:
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+
+      - name: Terraform Check
+        run: terraform fmt && terraform fmt -check
+
+  terraform-plan:
+    defaults:
+      run:
+        working-directory: terraform
+    needs: [ terraform-check ]
     name: Terraform Plan
     runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     steps:
-      - name: Configure AWS credentials
+      - name: Git pull
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials v2
         id: aws_setup
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -31,54 +69,152 @@ jobs:
           role-session-name: GitHub_to_AWS
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-
-      - name: Set up Terraform
-        id: set_tf_version
-        uses: hashicorp/setup-terraform@v2
+      - name: Restore terraform cache
+        uses: actions/cache/restore@v4
         with:
-          terraform_version: 1.9.6
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+          fail-on-cache-miss: true
 
-      - name: Terraform Init
-        run: terraform init
-      
-      - uses: actions/upload-artifact@v4
-        id: artifact-upload-step
-        with:
-          name: test
-          if-no-files-found: error
-          include-hidden-files: true
-          path: .terraform
-
-  check-dir:
-    name: Checking name
-    runs-on: ubuntu-latest
-    needs: [ setup ]
-
-  terraform-fmt:
-    name: Terraform Plan
-    runs-on: ubuntu-latest
-    needs: [ setup ]
-    steps:
-      - env:
-          DIR: ${{ needs.setup.outputs.output1 }}
-        run: terraform fmt
-
-  terraform-plan:
-    name: Terraform Plan
-    runs-on: ubuntu-latest
-    needs: [ setup, terraform-fmt ]
-    steps:
-      - env:
-          DIR: ${{ needs.setup.outputs.output1 }}
-        run: terraform plan
+      - name: Terraform Plan
+        run: terraform plan -var "ssh_public_key=${SSH_PUBLIC_KEY}" -input=false
+        # -input=false for noninteractive
 
   terraform-apply:
-    name: Terraform Plan
+    defaults:
+      run:
+        working-directory: terraform
+    if: github.ref == 'refs/heads/task_4'
+    needs: [ terraform-check, terraform-plan ]
+    name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: [ setup, terraform-fmt, terraform-plan ]
     steps:
-      - env:
-          DIR: ${{ needs.setup.outputs.output1 }}
-        run: terraform apply
+      - name: Git pull
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials v3
+        id: aws_setup
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Restore terraform cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+          fail-on-cache-miss: true
+      
+      - name: Terraform Apply
+        run: terraform apply -var "ssh_public_key=${SSH_PUBLIC_KEY}" -auto-approve
+
+  k3spv:
+    defaults:
+      run:
+        working-directory: terraform
+    if: github.ref == 'refs/heads/task_4'
+    needs: [ terraform-apply ]
+    name: k3s Hell pvc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git pull
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials v3
+        id: aws_setup
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Restore terraform cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+
+      - name: Scp pvc configs
+        env:
+          EC2_IP: ${{env.EC2_IP}}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          scp -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./helm ubuntu@$EC2_IP:/tmp
+
+      - name: Apply pv configs
+        env:
+          EC2_IP: ${{ env.EC2_IP }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP << 'EOF'
+          while ! sudo kubectl get nodes; do
+            echo "Waiting for k3s to be ready..."
+            sleep 10
+          done
+          sudo kubectl create namespace jenkins
+          sudo kubectl apply -f /tmp/helm/templates/jenkins-volume.yaml
+          sudo kubectl apply -f /tmp/helm/templates/jenkins-sa.yaml
+          EOF
+
+  helm:
+    defaults:
+      run:
+        working-directory: terraform
+    if: github.ref == 'refs/heads/task_4'
+    needs: [ k3spv ]
+    name: Helm Hell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git pull
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials v3
+        id: aws_setup
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Restore terraform cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./terraform/.terraform*
+          key: terraform-cache-${{ github.run_id }}
+          fail-on-cache-miss: true
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+
+      - name: Install Helm
+        env:
+          EC2_IP: ${{ env.EC2_IP }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP -t "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
+
+      - name: Deploy Jenkins with Helm
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP << 'EOF'
+          sudo helm repo add jenkinsci https://charts.jenkins.io
+          sudo helm repo update
+          sudo helm install jenkins jenkinsci/jenkins -n jenkins -f /tmp/helm/jenkins-values.yaml --kubeconfig /etc/rancher/k3s/k3s.yaml
+          sudo kubectl create -f /tmp/helm/templates/jenkins-deployment.yaml -n jenkins
+          EOF

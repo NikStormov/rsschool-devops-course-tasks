@@ -1,0 +1,16 @@
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              id: "github-credentials"
+              password: ${adminpw:-passw0rd}
+              scope: GLOBAL
+              username: "mtarasov"
+jenkins:
+  systemMessage: "Welcome to my Jenkins Instance"
+  jobs:
+    - script: >
+        job('Triggered') {
+            shell('echo $AMI_ID')
+        }
