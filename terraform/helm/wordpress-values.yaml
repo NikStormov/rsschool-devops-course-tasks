@@ -112,7 +112,7 @@ wordpressUsername: user
 ## @param wordpressPassword WordPress user password
 ## Defaults to a random 10-character alphanumeric string if not set
 ##
-wordpressPassword: ""
+wordpressPassword: "temp"
 ## @param existingSecret Name of existing secret containing WordPress credentials
 ## NOTE: Must contain key `wordpress-password`
 ## NOTE: When it's set, the `wordpressPassword` parameter is ignored
@@ -568,7 +568,7 @@ service:
   ## NOTE: choose port between <30000-32767>
   ##
   nodePorts:
-    http: ""
+    http: "32700"
     https: ""
   ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
   ## Values: ClientIP or None
@@ -846,7 +846,7 @@ persistence:
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
   ##
-  storageClass: "wordpress-pv"
+  storageClass: ""
   ## @param persistence.accessModes [array] Persistent Volume access modes
   ##
   accessModes:
@@ -1238,10 +1238,10 @@ mariadb:
   ##      https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-user-on-first-run
   ##
   auth:
-    rootPassword: ""
+    rootPassword: "temp"
     database: bitnami_wordpress
     username: bn_wordpress
-    password: ""
+    password: "temp"
   ## MariaDB Primary configuration
   ##
   primary:
@@ -1294,7 +1294,7 @@ externalDatabase:
   user: bn_wordpress
   ## @param externalDatabase.password External Database user password
   ##
-  password: ""
+  password: "temp"
   ## @param externalDatabase.database External Database database name
   ##
   database: bitnami_wordpress
@@ -1302,7 +1302,7 @@ externalDatabase:
   ## NOTE: Must contain key `mariadb-password`
   ## NOTE: When it's set, the `externalDatabase.password` parameter is ignored
   ##
-  existingSecret: ""
+  existingSecret: "temp"
 ## Memcached chart configuration
 ## ref: https://github.com/bitnami/charts/blob/main/bitnami/memcached/values.yaml
 ##
@@ -1322,10 +1322,10 @@ memcached:
     username: ""
     ## @param memcached.auth.password Memcached admin password
     ##
-    password: ""
+    password: "temp"
     ## @param memcached.auth.existingPasswordSecret Existing secret with Memcached credentials (must contain a value for `memcached-password` key)
     ##
-    existingPasswordSecret: ""
+    existingPasswordSecret: "temp"
   ## Service parameters
   ##
   service:

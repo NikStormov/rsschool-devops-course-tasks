@@ -1,66 +1,37 @@
+# Task 5: Simple Application Deployment with Helm
+
+## Submission
+
+- Provide a PR with the application and Helm chart in a new repository.
+- Ensure that the application is accessible from the internet.
+- Provide a PR with the CI/CD pipeline code for the application deployment.
+- Provide a README file documenting the application setup and deployment process.
+
 ## Evaluation Criteria (100 points for covering all criteria)
-I was doing setup by https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3. 
-But after jenkins start in goes to ERROR state  
-In logs fail in apply_config.sh  
-sudo kubectl describe pod jenkins-0 -n jenkins
-```
-Container ID:  containerd://b6511a65fa77587247a3224439f2a383b40f4117e569b5a1ad55bbb66a4ec083
-    Image:         docker.io/jenkins/jenkins:2.479.1-jdk17
-    Image ID:      docker.io/jenkins/jenkins@sha256:7ea4989040ce0840129937b339bf8c8f878c14b08991def312bdf51ca05aa358
-    Port:          <none>
-    Host Port:     <none>
-    Command:
-      sh
-      /var/jenkins_config/apply_config.sh
-    State:          Terminated
-      Reason:       Error
-      Exit Code:    2
-      Started:      Fri, 08 Nov 2024 12:32:53 +0000
-      Finished:     Fri, 08 Nov 2024 12:32:53 +0000
-    Last State:     Terminated
-      Reason:       Error
-      Exit Code:    2
-      Started:      Fri, 08 Nov 2024 12:32:30 +0000
-      Finished:     Fri, 08 Nov 2024 12:32:30 +0000
-    Ready:          False
-    Restart Count:  3
-    Limits:
-      cpu:     2
-      memory:  4Gi
-    Requests:
-      cpu:        50m
-      memory:     256Mi
-    Environment:  <none>
-```
 
-1. **Helm Installation and Verification (10 points)**
+1. **Helm Chart Creation (40 points)**
 
-   - Helm is installed and verified by deploying the Nginx chart.
+   - A Helm chart for the WordPress application is created.
+   **Answer**: all variables in wordpress-values.yaml file. Use exist charts as i understand [Git](https://github.com/bitnami/charts/tree/main/bitnami/wordpress)  
 
+2. **Application Deployment (30 points)**
 
-2. **Cluster Requirements (10 points)**
+   - The application is deployed using the Helm chart.
+   **Answer**: cant connect to DB, all passwords instaled in db logs ```Access denied for user 'bn_wordpress'@'10.42.0.34' (using password: YES)```  
+   - The application is accessible from the internet.  
+   **Answer**: Didn't check it
 
-   - The cluster has a solution for managing persistent volumes (PV) and persistent volume claims (PVC).
-   kubectl apply PVC is creating a storageclass.
-   ![alt text](./images/task4/objclass.png)
+3. **Repository Submission (5 points)**
 
-3. **Jenkins Installation (50 points)**
+   - A new repository is created with the WordPress and Helm chart.
+   **Answer**: Do not use separate repo for this task.  
 
-   - Jenkins is installed using Helm in a separate namespace.
-   **Answer**: i Have name space jenkins but the Jenkins by itself goes to Error State, so its not done
-   - Jenkins is available from the internet.
+4. **Verification (5 points)**
 
-4. **Jenkins Configuration (10 points)**
+   - The application is verified to be running and accessible.
 
-   - Jenkins configuration is stored on a persistent volume and is not lost when Jenkins' pod is terminated.
-   **Answer**: Becouse i do not have running Jenkins there is no configs in PV
-
-5. **Verification (10 points)**
-
-   - A simple Jenkins freestyle project is created and runs successfully, writing "Hello world" into the log.
-
-6. **Additional Tasks (10 points)**
-   - **GitHub Actions (GHA) Pipeline (5 points)**
-     - A GHA pipeline is set up to deploy Jenkins.
-   - **Authentication and Security (5 points)**
-     - Authentication and security settings are configured for Jenkins.
+5. **Additional Tasks (20 points)**
+   - **CI/CD Pipeline (10 points)**
+     - A CI/CD pipeline is set up to automate the deployment of the application.
+   - **Documentation (10 points)**
+     - The application setup and deployment process are documented in a README file
