@@ -17,21 +17,27 @@
 2. **Application Deployment (30 points)**
 
    - The application is deployed using the Helm chart.
-   **Answer**: cant connect to DB, all passwords instaled in db logs ```Access denied for user 'bn_wordpress'@'10.42.0.34' (using password: YES)```  
+   **Answer**: After  some time two pods are running state  
+   ![Pod Run](./images/task5/pods%20running.png) 
    - The application is accessible from the internet.  
-   **Answer**: Didn't check it
+   **Answer**: Yes, over custom port 32700. Don't know why k3s restricted ports  
+   ![Access From Web](./images/task5/webaccess.png)  
 
 3. **Repository Submission (5 points)**
 
    - A new repository is created with the WordPress and Helm chart.
-   **Answer**: Do not use separate repo for this task.  
+   **Answer**: Do not use separate repo for this task. Make all in one Repository
 
 4. **Verification (5 points)**
 
    - The application is verified to be running and accessible.
+   **Answer**: I did not check site features, but still have access after i see that Loadbalance is up  
+   ![Wait until LB loaded](./images/task5/loadbalance_start.png)
+
 
 5. **Additional Tasks (20 points)**
    - **CI/CD Pipeline (10 points)**
      - A CI/CD pipeline is set up to automate the deployment of the application.
+     **Answer**: Mopstly use ssh connection and does same thing that i did manualy in EC2 console.
    - **Documentation (10 points)**
      - The application setup and deployment process are documented in a README file
