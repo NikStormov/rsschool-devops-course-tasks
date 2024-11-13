@@ -214,7 +214,7 @@ smtpFromName: ""
 smtpExistingSecret: ""
 ## @param allowEmptyPassword Allow the container to be started with blank passwords
 ##
-allowEmptyPassword: true
+allowEmptyPassword: false
 ## @param allowOverrideNone Configure Apache to prohibit overriding directives with htaccess files
 ##
 allowOverrideNone: false
@@ -1294,7 +1294,7 @@ externalDatabase:
   user: bn_wordpress
   ## @param externalDatabase.password External Database user password
   ##
-  password: "temp"
+  password: ""
   ## @param externalDatabase.database External Database database name
   ##
   database: bitnami_wordpress
@@ -1302,7 +1302,7 @@ externalDatabase:
   ## NOTE: Must contain key `mariadb-password`
   ## NOTE: When it's set, the `externalDatabase.password` parameter is ignored
   ##
-  existingSecret: "temp"
+  existingSecret: ""
 ## Memcached chart configuration
 ## ref: https://github.com/bitnami/charts/blob/main/bitnami/memcached/values.yaml
 ##
@@ -1322,10 +1322,10 @@ memcached:
     username: ""
     ## @param memcached.auth.password Memcached admin password
     ##
-    password: "temp"
+    password: ""
     ## @param memcached.auth.existingPasswordSecret Existing secret with Memcached credentials (must contain a value for `memcached-password` key)
     ##
-    existingPasswordSecret: "temp"
+    existingPasswordSecret: ""
   ## Service parameters
   ##
   service:
