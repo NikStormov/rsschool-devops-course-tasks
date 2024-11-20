@@ -1,43 +1,75 @@
-# Task 5: Simple Application Deployment with Helm
+# Task 6: Application Deployment via Jenkins Pipeline
+I`m gonna make this repo -> GHA -> build infra by terrafor, helm, JCasC -> trigger Jenkins (On this step i will have problems ) -> jenkins get this repo -> build Dockerfile
+## Steps
+
+1. **Create Docker Image and Store in ECR**
+
+   - Create a Docker image for your application.
+   - Store the Docker image in an AWS ECR repository.
+   - Ensure your K8s nodes can access the ECR repository by adjusting or creating a new instance profile for your EC2 instances.
+
+2. **Create Helm Chart**
+
+   - Create a Helm chart for your application.
+   - Test the Helm chart manually from your local machine.
+
+3. **Store Artifacts in Git**
+
+   - Store the Dockerfile and Helm chart in a git repository accessible to Jenkins.
+
+4. **Configure Jenkins Pipeline**
+
+   - Create a Jenkins pipeline and store it as a Jenkinsfile in your main git repository.
+   - Configure the pipeline to be triggered on each push event to the repository.
+
+5. **Pipeline Steps**
+
+   - The pipeline should include the following steps:
+     1. Application build
+     2. Unit test execution
+     3. Security check with SonarQube
+     4. Docker image building and pushing to ECR (manual trigger)
+     5. Deployment to K8s cluster with Helm (dependent on the previous step)
+     6. (Optional) Application verification (e.g., curl main page, send requests to API, smoke test)
+
+6. **Additional Tasks**
+   - Set up a notification system to alert on pipeline failures or successes.
+   - Document the pipeline setup and deployment process in a README file.
 
 ## Submission
 
-- Provide a PR with the application and Helm chart in a new repository.
-- Ensure that the application is accessible from the internet.
-- Provide a PR with the CI/CD pipeline code for the application deployment.
-- Provide a README file documenting the application setup and deployment process.
+- Provide a PR with the application, Helm chart, and Jenkinsfile in a repository.
+- Ensure that the pipeline runs successfully and deploys the application to the K8s cluster.
+- Provide a README file documenting the pipeline setup and deployment process.
 
 ## Evaluation Criteria (100 points for covering all criteria)
 
-1. **Helm Chart Creation (40 points)**
+1. **Pipeline Configuration (40 points)**
 
-   - A Helm chart for the WordPress application is created.
-   **Answer**: all variables in wordpress-values.yaml file. Use exist charts as i understand [Git](https://github.com/bitnami/charts/tree/main/bitnami/wordpress)  
+   - A Jenkins pipeline is configured and stored as a Jenkinsfile in the main git repository.
+   - The pipeline includes the following steps:
+     - Application build
+     - Unit test execution
+     - Security check with SonarQube
+     - Docker image building and pushing to ECR (manual trigger)
+     - Deployment to K8s cluster with Helm (dependent on the previous step)
 
-2. **Application Deployment (30 points)**
+2. **Artifact Storage (20 points)**
 
-   - The application is deployed using the Helm chart.
-   **Answer**: After  some time two pods are running state  
-   ![Pod Run](./images/task5/pods%20running.png) 
-   - The application is accessible from the internet.  
-   **Answer**: Yes, over custom port 32700. Don't know why k3s restricted ports  
-   ![Access From Web](./images/task5/webaccess.png)  
+   - Built artifacts (Dockerfile, Helm chart) are stored in git and ECR (Docker image).
 
 3. **Repository Submission (5 points)**
 
-   - A new repository is created with the WordPress and Helm chart.
-   **Answer**: Do not use separate repo for this task. Make all in one Repository
+   - A repository is created with the application, Helm chart, and Jenkinsfile.
 
 4. **Verification (5 points)**
 
-   - The application is verified to be running and accessible.
-   **Answer**: I did not check site features, but still have access after i see that Loadbalance is up  
-   ![Wait until LB loaded](./images/task5/loadbalance_start.png)
+   - The pipeline runs successfully and deploys the application to the K8s cluster.
 
-
-5. **Additional Tasks (20 points)**
-   - **CI/CD Pipeline (10 points)**
-     - A CI/CD pipeline is set up to automate the deployment of the application.
-     **Answer**: Mopstly use ssh connection and does same thing that i did manualy in EC2 console.
+5. **Additional Tasks (30 points)**
+   - **Application Verification (10 points)**
+     - Application verification is performed (e.g., curl main page, send requests to API, smoke test).
+   - **Notification System (10 points)**
+     - A notification system is set up to alert on pipeline failures or successes.
    - **Documentation (10 points)**
-     - The application setup and deployment process are documented in a README file
+     - The pipeline setup and deployment process, are documented in a README file.

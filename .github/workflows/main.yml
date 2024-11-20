@@ -161,7 +161,9 @@ jobs:
             echo "Waiting for k3s to be ready..."
             sleep 10
           done
-          sudo kubectl create namespace wordpress
+          sudo kubectl create namespace jenkins
+          sudo kubectl apply -f /tmp/helm/templates/jenkins-volume.yaml
+          sudo kubectl apply -f /tmp/helm/templates/jenkins-sa.yaml
           EOF
 
   helm:
@@ -209,5 +211,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_IP << 'EOF'
-          sudo helm install my-release oci://registry-1.docker.io/bitnamicharts/wordpress -f /tmp/helm/wordpress-values.yaml --kubeconfig /etc/rancher/k3s/k3s.yaml -n wordpress
+          sudo helm repo add jenkinsci https://charts.jenkins.io
+          sudo helm repo update
+          sudo helm install jenkins jenkinsci/jenkins -n jenkins -f /tmp/helm/jenkins-values.yaml --kubeconfig /etc/rancher/k3s/k3s.yaml
           EOF
