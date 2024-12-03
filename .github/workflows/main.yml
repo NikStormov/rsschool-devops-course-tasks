@@ -84,7 +84,7 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    if: github.ref == 'refs/heads/task_5'
+    if: github.ref == 'refs/heads/task_6'
     needs: [ terraform-check, terraform-plan ]
     name: Terraform Apply
     runs-on: ubuntu-latest
