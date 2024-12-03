@@ -84,7 +84,7 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    if: github.ref == 'refs/heads/task_4'
+    if: github.ref == 'refs/heads/task_6'
     needs: [ terraform-check, terraform-plan ]
     name: Terraform Apply
     runs-on: ubuntu-latest
@@ -114,7 +114,6 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    if: github.ref == 'refs/heads/task_4'
     needs: [ terraform-apply ]
     name: k3s Hell pvc
     runs-on: ubuntu-latest
@@ -171,7 +170,6 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    if: github.ref == 'refs/heads/task_4'
     needs: [ k3spv ]
     name: Helm Hell
     runs-on: ubuntu-latest
@@ -216,5 +214,4 @@ jobs:
           sudo helm repo add jenkinsci https://charts.jenkins.io
           sudo helm repo update
           sudo helm install jenkins jenkinsci/jenkins -n jenkins -f /tmp/helm/jenkins-values.yaml --kubeconfig /etc/rancher/k3s/k3s.yaml
-          sudo kubectl create -f /tmp/helm/templates/jenkins-deployment.yaml -n jenkins
           EOF
