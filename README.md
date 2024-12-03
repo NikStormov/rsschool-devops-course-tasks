@@ -2,6 +2,9 @@
 I`m gonna make this repo -> GHA -> build infra by terrafor, helm, JCasC -> trigger Jenkins (On this step i will have problems ) -> jenkins get this repo -> build Dockerfile
 ## Steps
 
+Get it to work finaly
+[JENKINSWORK](./images/task6/MadeJenkinsWork.png)
+
 1. **Create Docker Image and Store in ECR**
 
    - Create a Docker image for your application.
